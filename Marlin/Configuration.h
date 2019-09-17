@@ -136,7 +136,7 @@
 
 // Optional custom name for your RepStrap or other custom machine
 // Displayed in the LCD "Ready" message
-#define CUSTOM_MACHINE_NAME "FRANK CUBE"
+#define CUSTOM_MACHINE_NAME "HEVO"
 
 // Define this to set a unique identifier for this printer, (Used by some programs to differentiate between machines)
 // You can use an online service to generate a random UUID. (eg http://www.uuidgenerator.net/version4)
@@ -609,7 +609,7 @@
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 96.5 }
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 412 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 412 }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -782,7 +782,7 @@
  */
 #define X_PROBE_OFFSET_FROM_EXTRUDER 25  // X offset: -left  +right  [of the nozzle]
 #define Y_PROBE_OFFSET_FROM_EXTRUDER 0  // Y offset: -front +behind [the nozzle]
-#define Z_PROBE_OFFSET_FROM_EXTRUDER -2.5   // Z offset: -below +above  [the nozzle]
+#define Z_PROBE_OFFSET_FROM_EXTRUDER -0.3   // Z offset: -below +above  [the nozzle]
 
 // Certain types of probes need to stay away from edges
 #define MIN_PROBE_EDGE 10
@@ -883,8 +883,8 @@
 // @section machine
 
 // The size of the print bed
-#define X_BED_SIZE 330
-#define Y_BED_SIZE 380
+#define X_BED_SIZE 300
+#define Y_BED_SIZE 290
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 #define X_MIN_POS 0
@@ -1487,7 +1487,7 @@
 //
 //  Set this option if CLOCKWISE causes values to DECREASE
 //
-#define REVERSE_ENCODER_DIRECTION
+//#define REVERSE_ENCODER_DIRECTION
 
 //
 // This option reverses the encoder direction for navigating LCD menus.
@@ -1533,7 +1533,7 @@
 //
 // Note: Usually sold with a white PCB.
 //
-//#define REPRAP_DISCOUNT_SMART_CONTROLLER
+#define REPRAP_DISCOUNT_SMART_CONTROLLER
 
 //
 // ULTIMAKER Controller.
@@ -1660,7 +1660,7 @@
 // RepRapDiscount FULL GRAPHIC Smart Controller
 // http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
 //
-#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 
 //
 // ReprapWorld Graphical LCD
