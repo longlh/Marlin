@@ -65,7 +65,7 @@
 
 /**
  * Include all needed font files
- * (See http://marlinfw.org/docs/development/fonts.html)
+ * (See https://marlinfw.org/docs/development/fonts.html)
  */
 #include "fontdata/fontdata_ISO10646_1.h"
 #if ENABLED(USE_SMALL_INFOFONT)
@@ -123,6 +123,7 @@ bool MarlinUI::detected() { return true; }
           custom_start_bmp
         #endif
       ;
+      TERN(CUSTOM_BOOTSCREEN_ANIMATED,,UNUSED(frame));
 
       u8g.drawBitmapP(left, top, CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH, CUSTOM_BOOTSCREEN_BMPHEIGHT, bmp);
 
@@ -227,9 +228,7 @@ bool MarlinUI::detected() { return true; }
   }
 
   void MarlinUI::show_bootscreen() {
-    #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
-      show_custom_bootscreen();
-    #endif
+    TERN_(SHOW_CUSTOM_BOOTSCREEN, show_custom_bootscreen());
     show_marlin_bootscreen();
   }
 
@@ -241,16 +240,10 @@ bool MarlinUI::detected() { return true; }
 
 // Initialize or re-initialize the LCD
 void MarlinUI::init_lcd() {
-  #if DISABLED(MKS_LCD12864B)
+  #if DISABLED(MKS_LCD12864)
 
     #if PIN_EXISTS(LCD_BACKLIGHT)
-      OUT_WRITE(LCD_BACKLIGHT_PIN, (
-        #if ENABLED(DELAYED_BACKLIGHT_INIT)
-          LOW  // Illuminate after reset
-        #else
-          HIGH // Illuminate right away
-        #endif
-      ));
+      OUT_WRITE(LCD_BACKLIGHT_PIN, DISABLED(DELAYED_BACKLIGHT_INIT)); // Illuminate after reset or right away
     #endif
 
     #if EITHER(MKS_12864OLED, MKS_12864OLED_SSD1306)
@@ -273,28 +266,20 @@ void MarlinUI::init_lcd() {
       WRITE(LCD_BACKLIGHT_PIN, HIGH);
     #endif
 
-    #if HAS_LCD_CONTRAST
-      refresh_contrast();
-    #endif
+    TERN_(HAS_LCD_CONTRAST, refresh_contrast());
 
-    #if ENABLED(LCD_SCREEN_ROT_90)
-      u8g.setRot90();
-    #elif ENABLED(LCD_SCREEN_ROT_180)
-      u8g.setRot180();
-    #elif ENABLED(LCD_SCREEN_ROT_270)
-      u8g.setRot270();
-    #endif
+    TERN_(LCD_SCREEN_ROT_90, u8g.setRot90());
+    TERN_(LCD_SCREEN_ROT_180, u8g.setRot180());
+    TERN_(LCD_SCREEN_ROT_270, u8g.setRot270());
 
-  #endif // !MKS_LCD12864B
+  #endif // !MKS_LCD12864
 
   uxg_SetUtf8Fonts(g_fontinfo, COUNT(g_fontinfo));
 }
 
 // The kill screen is displayed for unrecoverable conditions
 void MarlinUI::draw_kill_screen() {
-  #if ENABLED(LIGHTWEIGHT_UI)
-    ST7920_Lite_Status_Screen::clear_text_buffer();
-  #endif
+  TERN_(LIGHTWEIGHT_UI, ST7920_Lite_Status_Screen::clear_text_buffer());
   const u8g_uint_t h4 = u8g.getHeight() / 4;
   u8g.firstPage();
   do {
@@ -392,12 +377,14 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   // Draw a menu item with an editable value
   void MenuEditItemBase::draw(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
     if (mark_as_selected(row, sel)) {
-      const uint8_t vallen = (pgm ? utf8_strlen_P(data) : utf8_strlen((char*)data));
+      const uint8_t vallen = (pgm ? utf8_strlen_P(data) : utf8_strlen((char*)data)),
+                    pixelwidth = (pgm ? uxg_GetUtf8StrPixelWidthP(u8g.getU8g(), data) : uxg_GetUtf8StrPixelWidth(u8g.getU8g(), (char*)data));
+
       u8g_uint_t n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2 - vallen) * (MENU_FONT_WIDTH);
       if (vallen) {
         lcd_put_wchar(':');
         while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
-        lcd_moveto(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH) * vallen, row_y2);
+        lcd_moveto(LCD_PIXEL_WIDTH - _MAX((MENU_FONT_WIDTH) * vallen, pixelwidth + 2), row_y2);
         if (pgm) lcd_put_u8str_P(data); else lcd_put_u8str((char*)data);
       }
     }
