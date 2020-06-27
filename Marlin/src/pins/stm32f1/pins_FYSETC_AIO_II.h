@@ -109,6 +109,31 @@
 // 8:PC9 - SDIO_D1
 // 9:PA15 - SD_DETECT_PIN
 
+#if HAS_TMC220x
+
+  /**
+   * TMC2208/TMC2209 stepper drivers
+   */
+
+  //
+  // Hardware serial with selector
+  //
+  #define X_HARDWARE_SERIAL  Serial1
+  #define Y_HARDWARE_SERIAL  Serial1
+  #define Z_HARDWARE_SERIAL  Serial1
+  #define E0_HARDWARE_SERIAL Serial1
+
+  #if HAS_DRIVER(TMC2208)
+    #define TMC_SERIAL_MULTIPLEXER
+  #endif
+
+#endif
+
+#if ENABLED(TMC_SERIAL_MULTIPLEXER)
+  #define SERIAL_MUL_PIN1 PB13
+  #define SERIAL_MUL_PIN2 PB12
+#endif
+
 //
 // Heaters / Fans
 //
